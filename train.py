@@ -56,7 +56,7 @@ if __name__ == "__main__":
     torch.cuda.manual_seed(args.seed)
     dataset_name = args.dataset
     dataset_config = {
-        'Co-Skel': {
+        args.dataset: {
             'root_path': args.root_path,
             'list_dir': args.list_dir,
             'num_classes': args.num_classes,
