@@ -90,5 +90,5 @@ if __name__ == "__main__":
     if args.is_pretrain:
         net.load_from(weights=np.load(config_vit.pretrained_path))
 
-    trainer = {'Synapse': trainer_synapse,}
+    trainer = {args.dataset: trainer_synapse,}
     trainer[dataset_name](args, net, snapshot_path)
