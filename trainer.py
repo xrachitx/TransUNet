@@ -15,7 +15,7 @@ from tqdm import tqdm
 from utils import DiceLoss
 from torchvision import transforms
 from datasets.dataset_synapse import Synapse_dataset, RandomGenerator
-from dataloader import LoadDat
+from dataloader import LoadData
 
 
 def trainer_synapse(args, model, snapshot_path):
