@@ -56,7 +56,7 @@ def trainer_synapse(args, model, snapshot_path):
             image_batch, label_batch,weights,_ = sampled_batch[0], sampled_batch[1],sampled_batch[2],sampled_batch[3]
             image_batch, label_batch = image_batch.cuda(), label_batch.cuda()
             outputs = model(image_batch)
-#             print(outputs.shape)
+            print(outputs.shape,label_batch[:].long().shape)
 #             exit()
             loss_ce = ce_loss(outputs, label_batch[:].long())
             loss_dice = dice_loss(outputs, label_batch, softmax=True)
