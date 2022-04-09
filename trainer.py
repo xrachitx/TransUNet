@@ -32,7 +32,7 @@ def BCELoss_class_weighted():
         bce = - weights[:,0,:,:] * target * torch.log(inpt) - (1 - target) * weights[:,1,:,:] * torch.log(1 - inpt)
         return torch.mean(bce)
 
-    return 
+    return loss
 
 def trainer_synapse(args, model, snapshot_path):
     
