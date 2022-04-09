@@ -52,14 +52,16 @@ def trainer_synapse(args, model, snapshot_path):
 
     def worker_init_fn(worker_id):
         random.seed(args.seed + worker_id)
-
+    
+    dice_flag = False
     trainloader = DataLoader(db_train, batch_size=batch_size, shuffle=True)
     if args.n_gpu > 1:
         model = nn.DataParallel(model)
     model.train()
     ce_loss = BCELoss_class_weighted()
-    print(ce_loss)
-    dice_loss = DiceLoss(num_classes)
+#     print(ce_loss)
+    if dice_flag:
+        dice_loss = DiceLoss(num_classes)
     optimizer = optim.SGD(model.parameters(), lr=base_lr, momentum=0.9, weight_decay=0.0001)
     writer = SummaryWriter(snapshot_path + '/log')
     iter_num = 0
@@ -77,8 +79,12 @@ def trainer_synapse(args, model, snapshot_path):
             print(weights.shape)
 #             exit()
             loss_ce = ce_loss(outputs.squeeze(1), label_batch.squeeze(1)[:].long(),weights)
-            loss_dice = dice_loss(outputs, label_batch, softmax=True)
-            loss = 0.5 * loss_ce + 0.5 * loss_dice
+            if dice_flag:
+        
+                loss_dice = dice_loss(outputs, label_batch, softmax=True)
+                loss = 0.5 * loss_ce + 0.5 * loss_dice
+            else:
+                loss = loss_ce
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
