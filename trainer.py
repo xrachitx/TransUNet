@@ -58,6 +58,7 @@ def trainer_synapse(args, model, snapshot_path):
         model = nn.DataParallel(model)
     model.train()
     ce_loss = BCELoss_class_weighted()
+    print(ce_loss)
     dice_loss = DiceLoss(num_classes)
     optimizer = optim.SGD(model.parameters(), lr=base_lr, momentum=0.9, weight_decay=0.0001)
     writer = SummaryWriter(snapshot_path + '/log')
