@@ -17,6 +17,22 @@ from torchvision import transforms
 from datasets.dataset_synapse import Synapse_dataset, RandomGenerator
 from dataloader import LoadData
 
+def BCELoss_class_weighted():
+
+    def loss(inpt, target,weights):
+        inpt = torch.clamp(inpt,min=1e-7,max=1-1e-7)
+        inpt = inpt.squeeze()
+        target = target.squeeze()
+        
+        # print(inpt.shape,target.shape,weights[:,0].shape)
+        weights = torch.unsqueeze(weights,axis=2)
+        weights = torch.unsqueeze(weights,axis=3)
+        weights = torch.tile(weights,(1,1,inpt.shape[-2],inpt.shape[-1]))
+        # print(weights[:,0)
+        bce = - weights[:,0,:,:] * target * torch.log(inpt) - (1 - target) * weights[:,1,:,:] * torch.log(1 - inpt)
+        return torch.mean(bce)
+
+    return 
 
 def trainer_synapse(args, model, snapshot_path):
     
@@ -41,7 +57,7 @@ def trainer_synapse(args, model, snapshot_path):
     if args.n_gpu > 1:
         model = nn.DataParallel(model)
     model.train()
-    ce_loss = CrossEntropyLoss()
+    ce_loss = BCELoss_class_weighted()
     dice_loss = DiceLoss(num_classes)
     optimizer = optim.SGD(model.parameters(), lr=base_lr, momentum=0.9, weight_decay=0.0001)
     writer = SummaryWriter(snapshot_path + '/log')
@@ -58,7 +74,7 @@ def trainer_synapse(args, model, snapshot_path):
             outputs = model(image_batch).squeeze(1)
             print(outputs.shape,label_batch[:].long().shape)
 #             exit()
-            loss_ce = ce_loss(outputs, label_batch[:].long())
+            loss_ce = ce_loss(outputs, label_batch[:].long(),weights)
             loss_dice = dice_loss(outputs, label_batch, softmax=True)
             loss = 0.5 * loss_ce + 0.5 * loss_dice
             optimizer.zero_grad()
