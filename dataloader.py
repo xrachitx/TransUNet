@@ -10,9 +10,10 @@ import cv2
 
 
 class LoadData(Dataset):
-    def __init__(self, fileNames, rootDir, transform=None):
+    def __init__(self, fileNames, rootDir, double_channel = False,transform=None):
         self.rootDir = rootDir
         self.transform = transform
+        self.dc = double_channel
         self.frame = pd.read_csv(fileNames, dtype=str, delimiter=',', header=None)
     
     def __len__(self):
@@ -25,9 +26,15 @@ class LoadData(Dataset):
         # print(inputName,targetName,self.rootDir, self.frame.iloc[idx, 1][1:])
         inputImage = cv2.imread(inputName)
         targetImage = cv2.imread(targetName, cv2.IMREAD_GRAYSCALE)
+        
     
         
         targetImage = targetImage > 0.0
+        if self.dc:
+            out_im = np.zeros((448,448,2))
+            out_im[:,:,0] = np.where(target_image == 0, 1, 0)
+            out_im[:,:,1] = np.where(target_image == 1, 1, 0)
+            out_im = out_im.astype(np.float32)
         counts = np.unique(targetImage,return_counts=True)[1]
         weights = np.array([ counts[0]/(counts[0]+counts[1]) , counts[1]/(counts[0]+counts[1]) ])
         inputImage = inputImage.astype(np.float32)
@@ -36,7 +43,11 @@ class LoadData(Dataset):
         targetImage = np.expand_dims(targetImage,axis=0)
         
 #         return inputImage, targetImage,weights
-        return inputImage, targetImage,weights, self.frame.iloc[idx, 0]
+        if not self.dc:
+            return inputImage, targetImage,weights, self.frame.iloc[idx, 0]
+        else:
+            return inputImage, out_im,weights, self.frame.iloc[idx, 0]
+        
 
 if __name__ == "__main__":
     rootDir ="./CoSkel+"
