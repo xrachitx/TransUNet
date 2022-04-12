@@ -97,7 +97,7 @@ def trainer_synapse(args, model, snapshot_path):
             writer.add_scalar('info/total_loss', loss, iter_num)
             writer.add_scalar('info/loss_ce', loss_ce, iter_num)
 
-            logging.info('iteration %d : loss : %f, loss_ce: %f' % (iter_num, loss.item(), loss_ce.item()))
+        logging.info('iteration %d : loss : %f, loss_ce: %f' % (iter_num, loss.item(), loss_ce.item()))
 
 #             if iter_num % 20 == 0:
 #                 image = image_batch[1, 0:1, :, :]
@@ -108,7 +108,7 @@ def trainer_synapse(args, model, snapshot_path):
 #                 labs = label_batch[...].unsqueeze(0) * 50
 #                 writer.add_image('train/GroundTruth', labs, iter_num)
 
-        save_interval = 50  # int(max_epoch/6)
+        save_interval = 2  # int(max_epoch/6)
         if (epoch_num + 1) % save_interval == 0:
             save_mode_path = os.path.join(snapshot_path, 'epoch_' + str(epoch_num) + '.pth')
             torch.save(model.state_dict(), save_mode_path)
