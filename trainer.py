@@ -18,19 +18,35 @@ from datasets.dataset_synapse import Synapse_dataset, RandomGenerator
 from dataloader import LoadData
 
 def BCELoss_class_weighted():
+    
+   def _one_hot_encoder(self, input_tensor):
+        tensor_list = []
+        for i in range(self.n_classes):
+            temp_prob = input_tensor == i  # * torch.ones_like(input_tensor)
+            tensor_list.append(temp_prob.unsqueeze(1))
+        output_tensor = torch.cat(tensor_list, dim=1)
+        return output_tensor.float()
 
-    def loss(inpt, target,weights):
-        inpt = torch.clamp(inpt,min=1e-7,max=1-1e-7)
-        inpt = inpt.squeeze()
-        target = target.squeeze()
-        
-        # print(inpt.shape,target.shape,weights[:,0].shape)
-        weights = torch.unsqueeze(weights,axis=2)
-        weights = torch.unsqueeze(weights,axis=3)
-        weights = torch.tile(weights,(1,1,inpt.shape[-2],inpt.shape[-1]))
-        # print(weights[:,0)
-        bce = - weights[:,0,:,:] * target * torch.log(inpt) - (1 - target) * weights[:,1,:,:] * torch.log(1 - inpt)
-        return torch.mean(bce)
+    def loss(inpt, target,weights,dc):
+        if not dc:
+            inpt = torch.clamp(inpt,min=1e-7,max=1-1e-7)
+            inpt = inpt.squeeze()
+            target = target.squeeze()
+
+            # print(inpt.shape,target.shape,weights[:,0].shape)
+            weights = torch.unsqueeze(weights,axis=2)
+            weights = torch.unsqueeze(weights,axis=3)
+            weights = torch.tile(weights,(1,1,inpt.shape[-2],inpt.shape[-1]))
+            # print(weights[:,0)
+            bce = - weights[:,0,:,:] * target * torch.log(inpt) - (1 - target) * weights[:,1,:,:] * torch.log(1 - inpt)
+            return torch.mean(bce)
+        else:
+            inpt = torch.clamp(inpt,min=1e-7,max=1-1e-7)
+            target = self._one_hot_encoder(target)
+            weights = torch.unsqueeze(weights,axis=2)
+            weights = torch.unsqueeze(weights,axis=3)
+            weights = torch.tile(weights,(1,1,inpt.shape[-2],inpt.shape[-1]))
+            bce = - weights[:,0,:,:] * target[:,1,:,:] * torch.log(inpt[:,1,:,:]) - (target[:,0,:,:]) * weights[:,1,:,:] * torch.log(inptinpt[:,0,:,:])
 
     return loss
 
@@ -85,9 +101,10 @@ def trainer_synapse(args, model, snapshot_path):
                 label_batch = label_batch.squeeze()
                 loss_dice = dice_loss(outputs, label_batch, softmax=True)
                 print(loss_dice)
-                loss_ce = ce_loss(outputs.squeeze(1), label_batch.squeeze(1)[:].long(),weights)
+                loss_ce = ce_loss(outputs, label_batch.long(),weights,args.double_channel)
                 loss = 0.5 * loss_ce + 0.5 * loss_dice
             else:
+                loss_ce = ce_loss(outputs.squeeze(1), label_batch.squeeze(1)[:].long(),weights,args.double_channel)
                 loss = loss_ce
             optimizer.zero_grad()
             loss.backward()
