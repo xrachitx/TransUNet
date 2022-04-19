@@ -39,9 +39,9 @@ parser.add_argument('--vit_name', type=str,
                     default='R50-ViT-B_16', help='select one vit model')
 parser.add_argument('--vit_patches_size', type=int,
                     default=16, help='vit_patches_size, default is 16')
-parser.add_argument('--dice_flag, dest='dice_flag', action='store_true',
+parser.add_argument('--dice_flag', dest='dice_flag', action='store_true',
                     help='Using Dice loss')
-parser.add_argument('--double_channel, dest='double_channel', action='store_true',
+parser.add_argument('--double_channel', dest='double_channel', action='store_true',
                     help='Using 2 channel')
 args = parser.parse_args()
 
