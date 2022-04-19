@@ -44,11 +44,11 @@ class LoadData(Dataset):
         targetImage = np.expand_dims(targetImage,axis=0)
         
 #         return inputImage, targetImage,weights
-        if not self.dc:
-            return inputImage, targetImage,weights, self.frame.iloc[idx, 0]
-        else:
-            print("IT R DOUBLE CHANNEL")
-            return inputImage, out_im,weights, self.frame.iloc[idx, 0]
+#         if not self.dc:
+        return inputImage, targetImage,weights, self.frame.iloc[idx, 0]
+#         else:
+#             print("IT R DOUBLE CHANNEL")
+#             return inputImage, out_im,weights, self.frame.iloc[idx, 0]
         
 
 if __name__ == "__main__":
