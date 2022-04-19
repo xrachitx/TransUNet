@@ -21,7 +21,7 @@ def BCELoss_class_weighted():
 
     def _one_hot_encoder(input_tensor):
         tensor_list = []
-        for i in range(self.n_classes):
+        for i in range(2):
             temp_prob = input_tensor == i  # * torch.ones_like(input_tensor)
             tensor_list.append(temp_prob.unsqueeze(1))
         output_tensor = torch.cat(tensor_list, dim=1)
