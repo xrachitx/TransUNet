@@ -18,8 +18,8 @@ from datasets.dataset_synapse import Synapse_dataset, RandomGenerator
 from dataloader import LoadData
 
 def BCELoss_class_weighted():
-    
-   def _one_hot_encoder(self, input_tensor):
+
+    def _one_hot_encoder(self, input_tensor):
         tensor_list = []
         for i in range(self.n_classes):
             temp_prob = input_tensor == i  # * torch.ones_like(input_tensor)
