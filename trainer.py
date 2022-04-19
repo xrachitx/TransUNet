@@ -42,7 +42,7 @@ def BCELoss_class_weighted():
             return torch.mean(bce)
         else:
             inpt = torch.clamp(inpt,min=1e-7,max=1-1e-7)
-            target = self._one_hot_encoder(target)
+            target = _one_hot_encoder(target)
             weights = torch.unsqueeze(weights,axis=2)
             weights = torch.unsqueeze(weights,axis=3)
             weights = torch.tile(weights,(1,1,inpt.shape[-2],inpt.shape[-1]))
