@@ -82,7 +82,7 @@ def trainer_synapse(args, model, snapshot_path):
 #             exit()
             
             if args.dice_flag:
-        
+                label_batch = label_batch.squeeze()
                 loss_dice = dice_loss(outputs, label_batch, softmax=True)
                 print(loss_dice)
                 loss_ce = ce_loss(outputs.squeeze(1), label_batch.squeeze(1)[:].long(),weights)
