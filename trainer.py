@@ -82,6 +82,7 @@ def trainer_synapse(args, model, snapshot_path):
             if args.dice_flag:
         
                 loss_dice = dice_loss(outputs, label_batch, softmax=True)
+                print(loss_dice)
                 loss = 0.5 * loss_ce + 0.5 * loss_dice
             else:
                 loss = loss_ce
