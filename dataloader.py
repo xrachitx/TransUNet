@@ -35,6 +35,7 @@ class LoadData(Dataset):
             out_im[:,:,0] = np.where(target_image == 0, 1, 0)
             out_im[:,:,1] = np.where(target_image == 1, 1, 0)
             out_im = out_im.astype(np.float32)
+            out_im = out_im.transpose((2, 0, 1))
         counts = np.unique(targetImage,return_counts=True)[1]
         weights = np.array([ counts[0]/(counts[0]+counts[1]) , counts[1]/(counts[0]+counts[1]) ])
         inputImage = inputImage.astype(np.float32)
