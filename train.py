@@ -47,6 +47,7 @@ args = parser.parse_args()
 
 
 if __name__ == "__main__":
+#     print(args.dice_flag,args.double_channel)
     if not args.deterministic:
         cudnn.benchmark = True
         cudnn.deterministic = False
