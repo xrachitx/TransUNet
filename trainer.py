@@ -78,11 +78,12 @@ def trainer_synapse(args, model, snapshot_path):
 #             print(outputs.shape,label_batch[:].long().shape,weights,label_batch.shape)
 #             print(weights.shape)
 #             exit()
-            loss_ce = ce_loss(outputs.squeeze(1), label_batch.squeeze(1)[:].long(),weights)
+            
             if args.dice_flag:
         
                 loss_dice = dice_loss(outputs, label_batch, softmax=True)
                 print(loss_dice)
+                loss_ce = ce_loss(outputs.squeeze(1), label_batch.squeeze(1)[:].long(),weights)
                 loss = 0.5 * loss_ce + 0.5 * loss_dice
             else:
                 loss = loss_ce
