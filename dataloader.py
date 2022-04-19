@@ -47,6 +47,7 @@ class LoadData(Dataset):
         if not self.dc:
             return inputImage, targetImage,weights, self.frame.iloc[idx, 0]
         else:
+            print("IT R DOUBLE CHANNEL")
             return inputImage, out_im,weights, self.frame.iloc[idx, 0]
         
 
