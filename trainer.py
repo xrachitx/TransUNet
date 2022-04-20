@@ -83,7 +83,7 @@ def trainer_synapse(args, model, snapshot_path):
     iter_num = 0
     max_epoch = args.max_epochs
     max_iterations = args.max_epochs * len(trainloader)  # max_epoch = max_iterations // len(trainloader) + 1
-    logging.info("{} iterations per epoch. {} max iterations ".format(len(trainloader), max_iterations))
+    print("{} iterations per epoch. {} max iterations ".format(len(trainloader), max_iterations))
     best_performance = 0.0
     iterator = tqdm(range(max_epoch), ncols=70)
     for epoch_num in iterator:
@@ -92,7 +92,7 @@ def trainer_synapse(args, model, snapshot_path):
             image_batch, label_batch,weights = image_batch.cuda(), label_batch.cuda(),weights.cuda()
             
             outputs = model(image_batch)
-            print(image_batch.shape, outputs.shape,label_batch.shape)
+#             print(image_batch.shape, outputs.shape,label_batch.shape)
 #             print(outputs.shape,label_batch[:].long().shape,weights,label_batch.shape)
 #             print(weights.shape)
 #             exit()
@@ -120,25 +120,25 @@ def trainer_synapse(args, model, snapshot_path):
 
         
 
-            if iter_num % 20 == 0:
-                image = image_batch[1, 0:1, :, :]
-                image = (image - image.min()) / (image.max() - image.min())
-                writer.add_image('train/Image', image, iter_num)
-                outputs = torch.argmax(torch.softmax(outputs, dim=1), dim=1, keepdim=True)
-                writer.add_image('train/Prediction', outputs[1, ...] * 50, iter_num)
-                labs = label_batch[...].unsqueeze(0) * 50
-                writer.add_image('train/GroundTruth', labs, iter_num)
-        logging.info('iteration %d : loss : %f, loss_ce: %f' % (iter_num, loss.item(), loss_ce.item()))
+#             if iter_num % 20 == 0:
+#                 image = image_batch[1, 0:1, :, :]
+#                 image = (image - image.min()) / (image.max() - image.min())
+#                 writer.add_image('train/Image', image, iter_num)
+#                 outputs = torch.argmax(torch.softmax(outputs, dim=1), dim=1, keepdim=True)
+#                 writer.add_image('train/Prediction', outputs[1, ...] * 50, iter_num)
+#                 labs = label_batch[...].unsqueeze(0) * 50
+#                 writer.add_image('train/GroundTruth', labs, iter_num)
+        print('iteration %d : loss : %f, loss_ce: %f' % (iter_num, loss.item(), loss_ce.item()))
         save_interval = 2  # int(max_epoch/6)
         if (epoch_num + 1) % save_interval == 0:
             save_mode_path = os.path.join(snapshot_path, 'epoch_' + str(epoch_num) + '.pth')
             torch.save(model.state_dict(), save_mode_path)
-            logging.info("save model to {}".format(save_mode_path))
+            print("save model to {}".format(save_mode_path))
 
         if epoch_num >= max_epoch - 1:
             save_mode_path = os.path.join(snapshot_path, 'epoch_' + str(epoch_num) + '.pth')
             torch.save(model.state_dict(), save_mode_path)
-            logging.info("save model to {}".format(save_mode_path))
+            print("save model to {}".format(save_mode_path))
             iterator.close()
             break
 
