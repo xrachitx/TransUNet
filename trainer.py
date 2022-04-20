@@ -100,7 +100,7 @@ def trainer_synapse(args, model, snapshot_path):
             if args.dice_flag:
                 label_batch = label_batch.squeeze()
                 loss_dice = dice_loss(outputs, label_batch, softmax=True)
-                print(loss_dice)
+#                 print(loss_dice)
                 loss_ce = ce_loss(outputs, label_batch.long(),weights,args.double_channel)
                 loss = 0.5 * loss_ce + 0.5 * loss_dice
             else:
@@ -118,17 +118,17 @@ def trainer_synapse(args, model, snapshot_path):
             writer.add_scalar('info/total_loss', loss, iter_num)
             writer.add_scalar('info/loss_ce', loss_ce, iter_num)
 
+        
+
+            if iter_num % 20 == 0:
+                image = image_batch[1, 0:1, :, :]
+                image = (image - image.min()) / (image.max() - image.min())
+                writer.add_image('train/Image', image, iter_num)
+                outputs = torch.argmax(torch.softmax(outputs, dim=1), dim=1, keepdim=True)
+                writer.add_image('train/Prediction', outputs[1, ...] * 50, iter_num)
+                labs = label_batch[...].unsqueeze(0) * 50
+                writer.add_image('train/GroundTruth', labs, iter_num)
         logging.info('iteration %d : loss : %f, loss_ce: %f' % (iter_num, loss.item(), loss_ce.item()))
-
-#             if iter_num % 20 == 0:
-#                 image = image_batch[1, 0:1, :, :]
-#                 image = (image - image.min()) / (image.max() - image.min())
-#                 writer.add_image('train/Image', image, iter_num)
-#                 outputs = torch.argmax(torch.softmax(outputs, dim=1), dim=1, keepdim=True)
-#                 writer.add_image('train/Prediction', outputs[1, ...] * 50, iter_num)
-#                 labs = label_batch[...].unsqueeze(0) * 50
-#                 writer.add_image('train/GroundTruth', labs, iter_num)
-
         save_interval = 2  # int(max_epoch/6)
         if (epoch_num + 1) % save_interval == 0:
             save_mode_path = os.path.join(snapshot_path, 'epoch_' + str(epoch_num) + '.pth')
