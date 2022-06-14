@@ -152,11 +152,14 @@ class Embeddings(nn.Module):
 
 
     def forward(self, x):
+        print(x.shape)
         if self.hybrid:
             x, features = self.hybrid_model(x)
         else:
             features = None
+        print(x.shape)
         x = self.patch_embeddings(x)  # (B, hidden. n_patches^(1/2), n_patches^(1/2))
+        print(x.shape)
         x = x.flatten(2)
         x = x.transpose(-1, -2)  # (B, n_patches, hidden)
 
