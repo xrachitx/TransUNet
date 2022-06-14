@@ -14,7 +14,7 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 from utils import DiceLoss
 from torchvision import transforms
-from datasets.dataset_synapse import Synapse_dataset, RandomGenerator
+# from datasets.dataset_synapse import Synapse_dataset, RandomGenerator
 from dataloader import LoadData
 
 def BCELoss_class_weighted():
