@@ -80,7 +80,9 @@ class Attention(nn.Module):
         query_layer = self.transpose_for_scores(mixed_query_layer)
         key_layer = self.transpose_for_scores(mixed_key_layer)
         value_layer = self.transpose_for_scores(mixed_value_layer)
-
+        
+        print(query_layer.shape,key_layer.shape,value_layer.shape)
+        
         attention_scores = torch.matmul(query_layer, key_layer.transpose(-1, -2))
         attention_scores = attention_scores / math.sqrt(self.attention_head_size)
         attention_probs = self.softmax(attention_scores)
@@ -93,6 +95,7 @@ class Attention(nn.Module):
         context_layer = context_layer.view(*new_context_layer_shape)
         attention_output = self.out(context_layer)
         attention_output = self.proj_dropout(attention_output)
+        print(attention_output.shape)
         return attention_output, weights
 
 
@@ -118,6 +121,7 @@ class Mlp(nn.Module):
         x = self.dropout(x)
         x = self.fc2(x)
         x = self.dropout(x)
+        print(x.shape)
         return x
 
 
