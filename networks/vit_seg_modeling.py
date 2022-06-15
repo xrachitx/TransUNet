@@ -74,6 +74,8 @@ class Attention(nn.Module):
         mixed_query_layer = self.query(hidden_states)
         mixed_key_layer = self.key(hidden_states)
         mixed_value_layer = self.value(hidden_states)
+        
+        print(mixed_query_layer.shape,mixed_key_layer.shape,mixed_value_layer.shape)
 
         query_layer = self.transpose_for_scores(mixed_query_layer)
         key_layer = self.transpose_for_scores(mixed_key_layer)
