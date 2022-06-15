@@ -165,6 +165,7 @@ class Embeddings(nn.Module):
 
         embeddings = x + self.position_embeddings
         embeddings = self.dropout(embeddings)
+        print(embeddings.shape)
         return embeddings, features
 
 
