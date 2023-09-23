@@ -101,6 +101,7 @@ class Attention(nn.Module):
             key_vector = torch.ones((x.shape[0],x.shape[1],dim1,dim1,x.shape[-1]),dtype = x.dtype)
             key_vector[:,:,dim1//2:,dim1//2:,:] = torch.zeros((x.shape[0],x.shape[1],dim1//2,dim1//2,x.shape[-1]),dtype=x.dtype)
             key_vector  = key_vector.reshape((-1,dim1**2,x.shape[-1]))
+        print("qv, kv: ",query_vector.shape,key_vector.shape)
         return query_vector,key_vector 
         
     def forward(self, hidden_states):
