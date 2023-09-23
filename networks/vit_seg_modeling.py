@@ -87,8 +87,8 @@ class Attention(nn.Module):
         else:
             query_vector[:,:,dim1//2:,dim1//2:,:] = torch.ones((x.shape[0],x.shape[1],dim1//2,dim1//2,x.shape[-1]),dtype=x.dtype)
             key_vector[:,:,dim1//2:,dim1//2:,:] = torch.zeros((x.shape[0],x.shape[1],dim1//2,dim1//2,x.shape[-1]),dtype=x.dtype)
-        query_vector = query_vector.reshape((-1,x.shape[1],dim1**2,x.shape[-1]))
-        key_vector  = key_vector.reshape((-1,x.shape[1],dim1**2,x.shape[-1]))
+        query_vector = query_vector.reshape((-1,x.shape[1],dim1**2,x.shape[-1])).to("cuda")
+        key_vector  = key_vector.reshape((-1,x.shape[1],dim1**2,x.shape[-1])).to("cuda")
         print("qv, kv: ",query_vector.shape,key_vector.shape)
         return query_vector,key_vector 
         
