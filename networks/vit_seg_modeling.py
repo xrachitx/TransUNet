@@ -71,6 +71,38 @@ class Attention(nn.Module):
         x = x.view(*new_x_shape)
         return x.permute(0, 2, 1, 3)
 
+    def cross_image_selective_attention_mask(self,x,option):
+        dim1 = int(math.sqrt(x.shape[1]))
+        if option ==0:
+            query_vector = torch.zeros((x.shape[0],dim1,dim1,x.shape[-1]),dtype = x.dtype)
+            query_vector[:,:dim1//2,:dim1//2,:] = torch.ones((x.shape[0],dim1//2,dim1//2,x.shape[-1]),dtype=x.dtype)
+            query_vector = query_vector.reshape((-1,dim1**2,x.shape[-1]))
+            key_vector = torch.ones((x.shape[0],dim1,dim1,x.shape[-1]),dtype = x.dtype)
+            key_vector[:,:dim1//2,:dim1//2,:] = torch.zeros((x.shape[0],dim1//2,dim1//2,x.shape[-1]),dtype=x.dtype)
+            key_vector  = key_vector.reshape((-1,dim1**2,x.shape[-1]))
+        elif option == 1: 
+            query_vector = torch.zeros((x.shape[0],dim1,dim1,x.shape[-1]),dtype = x.dtype)
+            query_vector[:,:dim1//2,dim1//2:,:] = torch.ones((x.shape[0],dim1//2,dim1//2,x.shape[-1]),dtype=x.dtype)
+            query_vector = query_vector.reshape((-1,dim1**2,x.shape[-1]))
+            key_vector = torch.ones((x.shape[0],dim1,dim1,x.shape[-1]),dtype = x.dtype)
+            key_vector[:,:dim1//2,dim1//2:,:] = torch.zeros((x.shape[0],dim1//2,dim1//2,x.shape[-1]),dtype=x.dtype)
+            key_vector  = key_vector.reshape((-1,dim1**2,x.shape[-1]))
+        elif option ==2:
+            query_vector = torch.zeros((x.shape[0],dim1,dim1,x.shape[-1]),dtype = x.dtype)
+            query_vector[:,dim1//2:,:dim1//2,:] = torch.ones((x.shape[0],dim1//2,dim1//2,x.shape[-1]),dtype=x.dtype)
+            query_vector = query_vector.reshape((-1,dim1**2,x.shape[-1]))
+            key_vector = torch.ones((x.shape[0],dim1,dim1,x.shape[-1]),dtype = x.dtype)
+            key_vector[:,dim1//2:,:dim1//2,:] = torch.zeros((x.shape[0],dim1//2,dim1//2,x.shape[-1]),dtype=x.dtype)
+            key_vector  = key_vector.reshape((-1,dim1**2,x.shape[-1]))
+        else:
+            query_vector = torch.zeros((x.shape[0],dim1,dim1,x.shape[-1]),dtype = x.dtype)
+            query_vector[:,dim1//2:,dim1//2:,:] = torch.ones((x.shape[0],dim1//2,dim1//2,x.shape[-1]),dtype=x.dtype)
+            query_vector = query_vector.reshape((-1,dim1**2,x.shape[-1]))
+            key_vector = torch.ones((x.shape[0],dim1,dim1,x.shape[-1]),dtype = x.dtype)
+            key_vector[:,dim1//2:,dim1//2:,:] = torch.zeros((x.shape[0],dim1//2,dim1//2,x.shape[-1]),dtype=x.dtype)
+            key_vector  = key_vector.reshape((-1,dim1**2,x.shape[-1]))
+        return query_vector,key_vector 
+        
     def forward(self, hidden_states):
         mixed_query_layer = self.query(hidden_states)
         mixed_key_layer = self.key(hidden_states)
@@ -81,10 +113,27 @@ class Attention(nn.Module):
         query_layer = self.transpose_for_scores(mixed_query_layer)
         key_layer = self.transpose_for_scores(mixed_key_layer)
         value_layer = self.transpose_for_scores(mixed_value_layer)
+
+        query_mask1,key_mask1 = self.cross_image_selective_attention_mask(query_layer,0)
+        query_mask2,key_mask2 = self.cross_image_selective_attention_mask(query_layer,1)
+        query_mask3,key_mask3 = self.cross_image_selective_attention_mask(query_layer,2)
+        query_mask4,key_mask4 = self.cross_image_selective_attention_mask(query_layer,3)
         
+        query_layer_1 = query_layer * query_mask1
+        key_layer_1 = key_layer * key_mask1
+        query_layer_2 = query_layer * query_mask2
+        key_layer_2 = key_layer * key_mask2
+        query_layer_3 = query_layer * query_mask3
+        key_layer_3 = key_layer * key_mask3
+        query_layer_4 = query_layer * query_mask4
+        key_layer_4 = key_layer * key_mask4
         print(query_layer.shape,key_layer.shape,value_layer.shape)
         print(query_layer.shape, key_layer.transpose(-1, -2).shape)
-        attention_scores = torch.matmul(query_layer, key_layer.transpose(-1, -2))
+        attention_scores_1 = torch.matmul(query_layer_1, key_layer_1.transpose(-1, -2))
+        attention_scores_2 = torch.matmul(query_layer_2, key_layer_2.transpose(-1, -2))
+        attention_scores_3 = torch.matmul(query_layer_3, key_layer_3.transpose(-1, -2))
+        attention_scores_4 = torch.matmul(query_layer_4, key_layer_4.transpose(-1, -2))
+        attention_scores = attention_scores_1 + attention_scores_2 + attention_scores_3 + attention_scores_4
         attention_scores = attention_scores / math.sqrt(self.attention_head_size)
         attention_probs = self.softmax(attention_scores)
         weights = attention_probs if self.vis else None
