@@ -72,35 +72,23 @@ class Attention(nn.Module):
         return x.permute(0, 2, 1, 3)
 
     def cross_image_selective_attention_mask(self,x,option):
-        dim1 = int(math.sqrt(x.shape[1]))
+        dim1 = int(math.sqrt(x.shape[2]))
+        query_vector = torch.zeros((x.shape[0],x.shape[1],dim1,dim1,x.shape[-1]),dtype = x.dtype)
+        key_vector = torch.ones((x.shape[0],x.shape[1],dim1,dim1,x.shape[-1]),dtype = x.dtype)
         if option ==0:
-            query_vector = torch.zeros((x.shape[0],x.shape[1],dim1,dim1,x.shape[-1]),dtype = x.dtype)
             query_vector[:,:,:dim1//2,:dim1//2,:] = torch.ones((x.shape[0],x.shape[1],dim1//2,dim1//2,x.shape[-1]),dtype=x.dtype)
-            query_vector = query_vector.reshape((-1,dim1**2,x.shape[-1]))
-            key_vector = torch.ones((x.shape[0],x.shape[1],dim1,dim1,x.shape[-1]),dtype = x.dtype)
             key_vector[:,:,:dim1//2,:dim1//2,:] = torch.zeros((x.shape[0],x.shape[1],dim1//2,dim1//2,x.shape[-1]),dtype=x.dtype)
-            key_vector  = key_vector.reshape((-1,dim1**2,x.shape[-1]))
         elif option == 1: 
-            query_vector = torch.zeros((x.shape[0],x.shape[1],dim1,dim1,x.shape[-1]),dtype = x.dtype)
             query_vector[:,:,:dim1//2,dim1//2:,:] = torch.ones((x.shape[0],x.shape[1],dim1//2,dim1//2,x.shape[-1]),dtype=x.dtype)
-            query_vector = query_vector.reshape((-1,dim1**2,x.shape[-1]))
-            key_vector = torch.ones((x.shape[0],x.shape[1],dim1,dim1,x.shape[-1]),dtype = x.dtype)
             key_vector[:,:,:dim1//2,dim1//2:,:] = torch.zeros((x.shape[0],x.shape[1],dim1//2,dim1//2,x.shape[-1]),dtype=x.dtype)
-            key_vector  = key_vector.reshape((-1,dim1**2,x.shape[-1]))
         elif option ==2:
-            query_vector = torch.zeros((x.shape[0],x.shape[1],dim1,dim1,x.shape[-1]),dtype = x.dtype)
             query_vector[:,:,dim1//2:,:dim1//2,:] = torch.ones((x.shape[0],x.shape[1],dim1//2,dim1//2,x.shape[-1]),dtype=x.dtype)
-            query_vector = query_vector.reshape((-1,dim1**2,x.shape[-1]))
-            key_vector = torch.ones((x.shape[0],x.shape[1],dim1,dim1,x.shape[-1]),dtype = x.dtype)
             key_vector[:,:,dim1//2:,:dim1//2,:] = torch.zeros((x.shape[0],x.shape[1],dim1//2,dim1//2,x.shape[-1]),dtype=x.dtype)
-            key_vector  = key_vector.reshape((-1,dim1**2,x.shape[-1]))
         else:
-            query_vector = torch.zeros((x.shape[0],x.shape[1],dim1,dim1,x.shape[-1]),dtype = x.dtype)
             query_vector[:,:,dim1//2:,dim1//2:,:] = torch.ones((x.shape[0],x.shape[1],dim1//2,dim1//2,x.shape[-1]),dtype=x.dtype)
-            query_vector = query_vector.reshape((-1,dim1**2,x.shape[-1]))
-            key_vector = torch.ones((x.shape[0],x.shape[1],dim1,dim1,x.shape[-1]),dtype = x.dtype)
             key_vector[:,:,dim1//2:,dim1//2:,:] = torch.zeros((x.shape[0],x.shape[1],dim1//2,dim1//2,x.shape[-1]),dtype=x.dtype)
-            key_vector  = key_vector.reshape((-1,dim1**2,x.shape[-1]))
+        query_vector = query_vector.reshape((-1,dim1**2,x.shape[-1]))
+        key_vector  = key_vector.reshape((-1,dim1**2,x.shape[-1]))
         print("qv, kv: ",query_vector.shape,key_vector.shape)
         return query_vector,key_vector 
         
