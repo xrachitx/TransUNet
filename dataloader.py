@@ -42,11 +42,11 @@ class LoadData(Dataset):
             out_im[0,:,:] = np.where(targetImage == 0, 1, 0)
             out_im[1,:,:] = np.where(targetImage == 1, 1, 0)
             targetImage = out_im
-            counts = np.unique(targetImage[1],return_counts=True)
+            counts = np.unique(targetImage[1],return_counts=True)[1]
         else: 
             targetImage = np.expand_dims(targetImage,axis=0)
             counts = np.unique(targetImage,return_counts=True)[1]
-        print(targetImage)
+        print(np.tolist(targetImage))
         print(counts)
         print("counts")
         weights = np.array([ counts[0]/(counts[0]+counts[1]) , counts[1]/(counts[0]+counts[1]) ])
