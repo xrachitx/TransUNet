@@ -27,7 +27,9 @@ class LoadData(Dataset):
         inputImage = cv2.imread(inputName)
         targetImage = cv2.imread(targetName, cv2.IMREAD_GRAYSCALE)
         targetImage = targetImage > 0.0
-        
+        print(targetImage)
+        print(np.unique(targetImage,return_counts=True))
+        print("first counts")
         if self.transform:
             inputImage = Image.fromarray(inputImage)
             inputImage = self.transform(inputImage)
