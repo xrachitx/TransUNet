@@ -41,7 +41,8 @@ class LoadData(Dataset):
             out_im = np.zeros((2,448,448),dtype=int)
             out_im[0,:,:] = np.where(targetImage == 0, 1, 0)
             out_im[1,:,:] = np.where(targetImage == 1, 1, 0)
-            counts = np.unique(out_im[1],return_counts=True)
+            targetImage = out_im
+            counts = np.unique(targetImage[1],return_counts=True)
         else: 
             targetImage = np.expand_dims(targetImage,axis=0)
             counts = np.unique(targetImage,return_counts=True)[1]
