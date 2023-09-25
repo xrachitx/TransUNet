@@ -23,13 +23,9 @@ class LoadData(Dataset):
 
         inputName = os.path.join(self.rootDir, self.frame.iloc[idx, 0][1:])
         targetName = os.path.join(self.rootDir, self.frame.iloc[idx, 1][1:])
-        print(inputName,targetName,self.rootDir, self.frame.iloc[idx, 0])
         inputImage = cv2.imread(inputName)
         targetImage = cv2.imread(targetName, cv2.IMREAD_GRAYSCALE)
         targetImage = targetImage > 0.0
-        print(targetImage)
-        print(np.unique(targetImage,return_counts=True))
-        print("first counts")
         if self.transform:
             inputImage = Image.fromarray(inputImage)
             inputImage = self.transform(inputImage)
@@ -46,9 +42,6 @@ class LoadData(Dataset):
         else: 
             targetImage = np.expand_dims(targetImage,axis=0)
             counts = np.unique(targetImage,return_counts=True)[1]
-        print(targetImage.tolist())
-        print(counts)
-        print("counts")
         weights = np.array([ counts[0]/(counts[0]+counts[1]) , counts[1]/(counts[0]+counts[1]) ])
         inputImage = inputImage.astype(np.float32)
         targetImage = targetImage.astype(np.float32)
