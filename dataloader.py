@@ -27,6 +27,7 @@ class LoadData(Dataset):
         inputImage = cv2.imread(inputName)
         targetImage = cv2.imread(targetName, cv2.IMREAD_GRAYSCALE)
         targetImage = targetImage > 0.0
+        
         if self.transform:
             inputImage = Image.fromarray(inputImage)
             inputImage = self.transform(inputImage)
@@ -41,12 +42,14 @@ class LoadData(Dataset):
             out_im[:,:,1] = np.where(targetImage == 1, 1, 0)
             out_im = out_im.transpose((2, 0, 1))
             targetImage = out_im
+        else: 
+            targetImage = np.expand_dims(targetImage,axis=0)
         counts = np.unique(targetImage,return_counts=True)[1]
         weights = np.array([ counts[0]/(counts[0]+counts[1]) , counts[1]/(counts[0]+counts[1]) ])
         inputImage = inputImage.astype(np.float32)
         targetImage = targetImage.astype(np.float32)
         inputImage = inputImage.transpose((2, 0, 1))
-        targetImage = np.expand_dims(targetImage,axis=0)
+        
         print(inputImage.shape, targetImage.shape, weights.shape)
         return inputImage, targetImage,weights, self.frame.iloc[idx, 0]
         
