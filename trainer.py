@@ -90,8 +90,6 @@ def trainer_synapse(args, model, snapshot_path):
         for i_batch, sampled_batch in enumerate(trainloader):
             image_batch, label_batch,weights,_ = sampled_batch[0], sampled_batch[1],sampled_batch[2],sampled_batch[3]
             image_batch, label_batch,weights = image_batch.cuda(), label_batch.cuda(),weights.cuda()
-            print("batch shapes: ",image_batch.shape,label_batch.shape, weights.shape)
-            print(weights)
             
             outputs = model(image_batch)
 #             print(image_batch.shape, outputs.shape,label_batch.shape)
@@ -100,11 +98,8 @@ def trainer_synapse(args, model, snapshot_path):
 #             exit()
             
             if args.dice_flag:
-                print(outputs.shape,label_batch.shape)
-                label_batch = label_batch.squeeze()
-                print(outputs.shape,label_batch.shape)
                 print("dice")
-                loss_dice = dice_loss(outputs, label_batch, softmax=True)
+                loss_dice = dice_loss(outputs, label_batch, weight=weights,softmax=True)
 #                 print(loss_dice)
                 loss_ce = ce_loss(outputs, label_batch.long(),weights,args.double_channel)
                 loss = 0.5 * loss_ce + 0.5 * loss_dice
