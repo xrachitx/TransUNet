@@ -99,7 +99,10 @@ def trainer_synapse(args, model, snapshot_path):
 #             exit()
             
             if args.dice_flag:
+                print(outputs.shape,label_batch.shape)
                 label_batch = label_batch.squeeze()
+                print(outputs.shape,label_batch.shape)
+                print("dice")
                 loss_dice = dice_loss(outputs, label_batch, softmax=True)
 #                 print(loss_dice)
                 loss_ce = ce_loss(outputs, label_batch.long(),weights,args.double_channel)
