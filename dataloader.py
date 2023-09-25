@@ -39,11 +39,9 @@ class LoadData(Dataset):
             targetImage = self.transform(targetImage)
             targetImage = np.array(targetImage)
         if self.dc:
-            out_im = np.zeros((448,448,2))
-            out_im[:,:,0] = np.where(targetImage == 0, 1, 0)
-            out_im[:,:,1] = np.where(targetImage == 1, 1, 0)
-            print(out_im)
-            out_im = out_im.transpose((2, 0, 1))
+            out_im = np.zeros((2,448,448))
+            out_im[0,:,:] = np.where(targetImage == 0, 1, 0)
+            out_im[1,:,:] = np.where(targetImage == 1, 1, 0)
             targetImage = out_im
         else: 
             targetImage = np.expand_dims(targetImage,axis=0)
