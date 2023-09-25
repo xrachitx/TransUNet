@@ -27,6 +27,7 @@ class LoadData(Dataset):
         inputImage = cv2.imread(inputName)
         targetImage = cv2.imread(targetName, cv2.IMREAD_GRAYSCALE)
         targetImage = targetImage > 0.0
+        targetImage = targetImage.astype(int) 
         print(targetImage)
         print(np.unique(targetImage,return_counts=True))
         print("first counts")
@@ -39,8 +40,8 @@ class LoadData(Dataset):
             targetImage = np.array(targetImage)
         if self.dc:
             out_im = np.zeros((448,448,2))
-            out_im[:,:,0] = np.where(targetImage == False, 1, 0)
-            out_im[:,:,1] = np.where(targetImage == True, 1, 0)
+            out_im[:,:,0] = np.where(targetImage == 0, 1, 0)
+            out_im[:,:,1] = np.where(targetImage == 1, 1, 0)
             out_im = out_im.transpose((2, 0, 1))
             targetImage = out_im
         else: 
