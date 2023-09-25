@@ -23,7 +23,7 @@ class LoadData(Dataset):
 
         inputName = os.path.join(self.rootDir, self.frame.iloc[idx, 0][1:])
         targetName = os.path.join(self.rootDir, self.frame.iloc[idx, 1][1:])
-        # print(inputName,targetName,self.rootDir, self.frame.iloc[idx, 1][1:])
+        print(inputName,targetName,self.rootDir, self.frame.iloc[idx, 0])
         inputImage = cv2.imread(inputName)
         targetImage = cv2.imread(targetName, cv2.IMREAD_GRAYSCALE)
         targetImage = targetImage > 0.0
