@@ -47,7 +47,7 @@ def BCELoss_class_weighted():
             weights = torch.tile(weights,(1,1,inpt.shape[-2],inpt.shape[-1]))
             print("in ce",weights[:,0,:,:].shape, target[:,1,:,:].shape)
             print(weights[:,0,:,:],target[:,1,:,:])
-            bce = - weights[:,0,:,:] * target[:,1,:,:] * torch.log(inpt[:,1,:,:]) - (target[0,:,:]) * weights[:,1,:,:] * torch.log(inpt[:,0,:,:])
+            bce = - weights[:,0,:,:] * target[:,1,:,:] * torch.log(inpt[:,1,:,:]) - (target[:,0,:,:]) * weights[:,1,:,:] * torch.log(inpt[:,0,:,:])
             return torch.mean(bce)
     return loss
 
