@@ -77,7 +77,7 @@ def trainer_synapse(args, model, snapshot_path):
     ce_loss = BCELoss_class_weighted()
 #     print(ce_loss)
     if args.dice_flag:
-        dice_loss = DiceLoss(num_classes)
+        dice_loss = DiceLoss(num_classes,args.double_channel)
     optimizer = optim.SGD(model.parameters(), lr=base_lr, momentum=0.9, weight_decay=0.0001)
     writer = SummaryWriter(snapshot_path + '/log')
     iter_num = 0
