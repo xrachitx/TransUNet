@@ -42,9 +42,6 @@ def BCELoss_class_weighted():
             return torch.mean(bce)
         else:
             inpt = torch.clamp(inpt,min=1e-7,max=1-1e-7)
-            weights = torch.unsqueeze(weights,axis=2)
-            weights = torch.unsqueeze(weights,axis=3)
-            weights = torch.tile(weights,(1,1,inpt.shape[-2],inpt.shape[-1]))
             bce = - weights[:,0,:,:] * target[:,1,:,:] * torch.log(inpt[:,1,:,:]) - (target[:,0,:,:]) * weights[:,1,:,:] * torch.log(inpt[:,0,:,:])
             return torch.mean(bce)
     return loss
@@ -99,6 +96,9 @@ def trainer_synapse(args, model, snapshot_path):
             if args.dice_flag:
                 print("dice")
                 print("pre dice",weights.shape)
+                weights = torch.unsqueeze(weights,axis=2)
+                weights = torch.unsqueeze(weights,axis=3)
+                weights = torch.tile(weights,(1,1,label_batch.shape[-2],label_batch.shape[-1]))
                 loss_dice = dice_loss(outputs, label_batch, weight=weights,softmax=True)
 #                 print(loss_dice)
                 print("post dice",weights.shape)
