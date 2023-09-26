@@ -23,9 +23,9 @@ class DiceLoss(nn.Module):
     def _dice_loss(self, score, target):
         target = target.float()
         smooth = 1e-5
-        intersect = torch.sum(score * target)
-        y_sum = torch.sum(target * target)
-        z_sum = torch.sum(score * score)
+        intersect = score * target
+        y_sum = target * target
+        z_sum = score * score
         loss = (2 * intersect + smooth) / (z_sum + y_sum + smooth)
         loss = 1 - loss
         return loss
@@ -45,9 +45,9 @@ class DiceLoss(nn.Module):
                 dice = self._dice_loss(inputs[:, i], target[:, i])
             else:
                 dice = self._dice_loss(inputs[:, i, :, :], target[:, i, :, :])
-            print("dice: ", i, " ", dice, " ",weight[i]) 
+            print("dice: ", i, " ", dice.shape, " ",weight[:,i].shape) 
             class_wise_dice.append(1.0 - dice.item())
-            loss += dice * weight[:,i]
+            loss += torch.sum(dice * weight[:,i])
         return loss / self.n_classes
 
 
