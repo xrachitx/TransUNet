@@ -46,7 +46,7 @@ class DiceLoss(nn.Module):
             else:
                 dice = self._dice_loss(inputs[:, i, :, :], target[:, i, :, :])
             print("dice: ", i, " ", dice.shape, " ",weight[:,i].shape) 
-            class_wise_dice.append(1.0 - dice.item())
+            class_wise_dice.append(1.0 - dice)
             loss += torch.sum(dice * weight[:,i])
         return loss / self.n_classes
 
