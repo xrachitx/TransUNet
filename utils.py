@@ -7,9 +7,10 @@ import SimpleITK as sitk
 
 
 class DiceLoss(nn.Module):
-    def __init__(self, n_classes):
+    def __init__(self, n_classes, double_channel):
         super(DiceLoss, self).__init__()
         self.n_classes = n_classes
+        self.dc = double_channel
 
     def _one_hot_encoder(self, input_tensor):
         tensor_list = []
@@ -32,14 +33,18 @@ class DiceLoss(nn.Module):
     def forward(self, inputs, target, weight=None, softmax=False):
         if softmax:
             inputs = torch.softmax(inputs, dim=1)
-        target = self._one_hot_encoder(target)
+        if not self.dc:
+            target = self._one_hot_encoder(target)
         if weight is None:
             weight = [1] * self.n_classes
         assert inputs.size() == target.size(), 'predict {} & target {} shape do not match'.format(inputs.size(), target.size())
         class_wise_dice = []
         loss = 0.0
         for i in range(0, self.n_classes):
-            dice = self._dice_loss(inputs[:, i], target[:, i])
+            if not self.dc:
+                dice = self._dice_loss(inputs[:, i], target[:, i])
+            else:
+                dice = self._dice_loss(inputs[:, i, :, :], target[:, i, :, :])
             class_wise_dice.append(1.0 - dice.item())
             loss += dice * weight[i]
         return loss / self.n_classes
