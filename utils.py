@@ -44,9 +44,6 @@ class DiceLoss(nn.Module):
             if not self.dc:
                 dice = self._dice_loss(inputs[:, i], target[:, i])
             else:
-                weight = torch.unsqueeze(weight,axis=2)
-                weight = torch.unsqueeze(weight,axis=3)
-                weight = torch.tile(weight,(1,1,inputs.shape[-2],inputs.shape[-1]))
                 dice = self._dice_loss(inputs[:, i, :, :], target[:, i, :, :])
             print("dice: ", i, " ", dice.shape, " ",weight[:,i,:,:].shape) 
             class_wise_dice.append(1.0 - dice)
