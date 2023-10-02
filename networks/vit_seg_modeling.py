@@ -74,23 +74,17 @@ class Attention(nn.Module):
     def cross_image_selective_attention_mask(self,x,option):
         dim1 = int(math.sqrt(x.shape[2]))
         query_vector = torch.zeros((x.shape[0],x.shape[1],dim1,dim1,x.shape[-1]),dtype = x.dtype)
-        key_vector = torch.ones((x.shape[0],x.shape[1],dim1,dim1,x.shape[-1]),dtype = x.dtype)
         if option ==0:
             query_vector[:,:,:dim1//2,:dim1//2,:] = torch.ones((x.shape[0],x.shape[1],dim1//2,dim1//2,x.shape[-1]),dtype=x.dtype)
-            key_vector[:,:,:dim1//2,:dim1//2,:] = torch.zeros((x.shape[0],x.shape[1],dim1//2,dim1//2,x.shape[-1]),dtype=x.dtype)
         elif option == 1: 
             query_vector[:,:,:dim1//2,dim1//2:,:] = torch.ones((x.shape[0],x.shape[1],dim1//2,dim1//2,x.shape[-1]),dtype=x.dtype)
-            key_vector[:,:,:dim1//2,dim1//2:,:] = torch.zeros((x.shape[0],x.shape[1],dim1//2,dim1//2,x.shape[-1]),dtype=x.dtype)
         elif option ==2:
             query_vector[:,:,dim1//2:,:dim1//2,:] = torch.ones((x.shape[0],x.shape[1],dim1//2,dim1//2,x.shape[-1]),dtype=x.dtype)
-            key_vector[:,:,dim1//2:,:dim1//2,:] = torch.zeros((x.shape[0],x.shape[1],dim1//2,dim1//2,x.shape[-1]),dtype=x.dtype)
         else:
             query_vector[:,:,dim1//2:,dim1//2:,:] = torch.ones((x.shape[0],x.shape[1],dim1//2,dim1//2,x.shape[-1]),dtype=x.dtype)
-            key_vector[:,:,dim1//2:,dim1//2:,:] = torch.zeros((x.shape[0],x.shape[1],dim1//2,dim1//2,x.shape[-1]),dtype=x.dtype)
         query_vector = query_vector.reshape((-1,x.shape[1],dim1**2,x.shape[-1])).to("cuda")
-        key_vector  = key_vector.reshape((-1,x.shape[1],dim1**2,x.shape[-1])).to("cuda")
         print("qv, kv: ",query_vector.shape,key_vector.shape)
-        return query_vector,key_vector 
+        return query_vector,1-query_vector
         
     def forward(self, hidden_states):
         mixed_query_layer = self.query(hidden_states)
