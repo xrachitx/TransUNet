@@ -152,7 +152,7 @@ class Mlp(nn.Module):
         x = self.dropout(x)
         x = self.fc2(x)
         x = self.dropout(x)
-        print(x.shape)
+        # print(x.shape)
         return x
 
 
@@ -191,7 +191,7 @@ class Embeddings(nn.Module):
 
 
     def forward(self, x):
-        print(x.shape)
+        # print(x.shape)
         if self.hybrid:
             x, features = self.hybrid_model(x)
         else:
