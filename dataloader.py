@@ -47,7 +47,6 @@ class LoadData(Dataset):
         targetImage = targetImage.astype(np.float32)
         inputImage = inputImage.transpose((2, 0, 1))
         
-        print(inputImage.shape, targetImage.shape, weights.shape)
         return inputImage, targetImage,weights, self.frame.iloc[idx, 0]
         
 
