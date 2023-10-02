@@ -94,16 +94,11 @@ def trainer_synapse(args, model, snapshot_path):
 #             exit()
             
             if args.dice_flag:
-                print("dice")
-                print("pre dice",weights.shape)
                 weights = torch.unsqueeze(weights,axis=2)
                 weights = torch.unsqueeze(weights,axis=3)
                 weights = torch.tile(weights,(1,1,label_batch.shape[-2],label_batch.shape[-1]))
                 loss_dice = dice_loss(outputs, label_batch, weight=weights,softmax=True)
-#                 print(loss_dice)
-                print("post dice",weights.shape)
                 loss_ce = ce_loss(outputs, label_batch.long(),weights,args.double_channel)
-                print("loss print",loss_dice,loss_ce)
                 loss = 0.5 * loss_ce + 0.5 * loss_dice
             else:
                 loss_ce = ce_loss(outputs.squeeze(1), label_batch.squeeze(1)[:].long(),weights,args.double_channel)
