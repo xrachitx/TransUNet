@@ -88,7 +88,7 @@ def trainer_synapse(args, model, snapshot_path):
             image_batch, label_batch,weights = image_batch.cuda(), label_batch.cuda(),weights.cuda()
             
             outputs = model(image_batch)
-            print(image_batch.shape, outputs.shape,label_batch.shape)
+            # print(image_batch.shape, outputs.shape,label_batch.shape)
 #             print(outputs.shape,label_batch[:].long().shape,weights,label_batch.shape)
 #             print(weights.shape)
 #             exit()
