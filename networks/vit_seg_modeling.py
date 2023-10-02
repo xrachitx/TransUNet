@@ -66,7 +66,6 @@ class Attention(nn.Module):
         self.softmax = Softmax(dim=-1)
 
     def transpose_for_scores(self, x):
-        print("x.size()[:-1]: ",x.size()[:-1], ", (self.num_attention_heads, self.attention_head_size): ",(self.num_attention_heads, self.attention_head_size))
         new_x_shape = x.size()[:-1] + (self.num_attention_heads, self.attention_head_size)
         x = x.view(*new_x_shape)
         return x.permute(0, 2, 1, 3)
@@ -90,7 +89,7 @@ class Attention(nn.Module):
         mixed_key_layer = self.key(hidden_states)
         mixed_value_layer = self.value(hidden_states)
         
-        print(mixed_query_layer.shape,mixed_key_layer.shape,mixed_value_layer.shape)
+        # print(mixed_query_layer.shape,mixed_key_layer.shape,mixed_value_layer.shape)
 
         query_layer = self.transpose_for_scores(mixed_query_layer)
         key_layer = self.transpose_for_scores(mixed_key_layer)
@@ -109,8 +108,8 @@ class Attention(nn.Module):
         key_layer_3 = key_layer * key_mask3
         query_layer_4 = query_layer * query_mask4
         key_layer_4 = key_layer * key_mask4
-        print(query_layer.shape,key_layer.shape,value_layer.shape)
-        print(query_layer.shape, key_layer.transpose(-1, -2).shape)
+        # print(query_layer.shape,key_layer.shape,value_layer.shape)
+        # print(query_layer.shape, key_layer.transpose(-1, -2).shape)
         attention_scores_1 = torch.matmul(query_layer_1, key_layer_1.transpose(-1, -2))
         attention_scores_2 = torch.matmul(query_layer_2, key_layer_2.transpose(-1, -2))
         attention_scores_3 = torch.matmul(query_layer_3, key_layer_3.transpose(-1, -2))
@@ -127,7 +126,7 @@ class Attention(nn.Module):
         context_layer = context_layer.view(*new_context_layer_shape)
         attention_output = self.out(context_layer)
         attention_output = self.proj_dropout(attention_output)
-        print(attention_output.shape)
+        # print(attention_output.shape)
         return attention_output, weights
 
 
@@ -168,9 +167,9 @@ class Embeddings(nn.Module):
 
         if config.patches.get("grid") is not None:   # ResNet
             grid_size = config.patches["grid"]
-            print("img Size: "+ str(img_size) + "grid size: "+ str(grid_size ))
+            # print("img Size: "+ str(img_size) + "grid size: "+ str(grid_size ))
             patch_size = (img_size[0] // 16 // grid_size[0], img_size[1] // 16 // grid_size[1])
-            print("patch Size: "+ str(patch_size))
+            # print("patch Size: "+ str(patch_size))
             patch_size_real = (patch_size[0] * 16, patch_size[1] * 16)
             n_patches = (img_size[0] // patch_size_real[0]) * (img_size[1] // patch_size_real[1])  
             self.hybrid = True
@@ -197,15 +196,15 @@ class Embeddings(nn.Module):
             x, features = self.hybrid_model(x)
         else:
             features = None
-        print(x.shape)
+        # print(x.shape)
         x = self.patch_embeddings(x)  # (B, hidden. n_patches^(1/2), n_patches^(1/2))
-        print(x.shape)
+        # print(x.shape)
         x = x.flatten(2)
         x = x.transpose(-1, -2)  # (B, n_patches, hidden)
 
         embeddings = x + self.position_embeddings
         embeddings = self.dropout(embeddings)
-        print(embeddings.shape)
+        # print(embeddings.shape)
         return embeddings, features
 
 
