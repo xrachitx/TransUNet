@@ -43,6 +43,12 @@ parser.add_argument('--dice_flag', dest='dice_flag', action='store_true',
                     help='Using Dice loss')
 parser.add_argument('--double_channel', dest='double_channel', action='store_true',
                     help='Using 2 channel')
+parser.add_argument('--is_pretrain', dest='is_pretrain', action='store_true',
+                    help='Using pretrained model')
+parser.add_argument('--epochs_till_now', type=int,
+                    default=0, help='epochs to start at if pretraining')
+parser.add_argument('--model_path', type=str,
+                    default="", help='path to pretrained model')
 args = parser.parse_args()
 
 
@@ -70,7 +76,6 @@ if __name__ == "__main__":
     args.num_classes = dataset_config[dataset_name]['num_classes']
     args.root_path = dataset_config[dataset_name]['root_path']
     args.list_dir = dataset_config[dataset_name]['list_dir']
-    args.is_pretrain = False
     args.exp = 'TU_' + dataset_name + str(args.img_size)
     snapshot_path = "../model/{}/{}".format(args.exp, 'TU')
     snapshot_path = snapshot_path + '_pretrain' if args.is_pretrain else snapshot_path
@@ -93,7 +98,7 @@ if __name__ == "__main__":
         config_vit.patches.grid = (int(args.img_size / args.vit_patches_size), int(args.img_size / args.vit_patches_size))
     net = ViT_seg(config_vit, img_size=args.img_size, num_classes=config_vit.n_classes).cuda()
     if args.is_pretrain:
-        net.load_from(weights=np.load(config_vit.pretrained_path))
+        net.load_state_dict(torch.load(args.model_path))
 
     trainer = {args.dataset: trainer_synapse,}
     trainer[dataset_name](args, net, snapshot_path)
