@@ -49,6 +49,8 @@ parser.add_argument('--epochs_till_now', type=int,
                     default=0, help='epochs to start at if pretraining')
 parser.add_argument('--model_path', type=str,
                     default="", help='path to pretrained model')
+parser.add_argument('--selective-attention', dest='selective-attention', action='store_true',
+                    help='Using selective attention')
 args = parser.parse_args()
 
 
