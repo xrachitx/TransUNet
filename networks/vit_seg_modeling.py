@@ -62,7 +62,7 @@ class Attention(nn.Module):
         self.out = Linear(config.hidden_size, config.hidden_size)
         self.attn_dropout = Dropout(config.transformer["attention_dropout_rate"])
         self.proj_dropout = Dropout(config.transformer["attention_dropout_rate"])
-
+        self.config = config
         self.softmax = Softmax(dim=-1)
 
     def transpose_for_scores(self, x):
@@ -94,7 +94,7 @@ class Attention(nn.Module):
         query_layer = self.transpose_for_scores(mixed_query_layer)
         key_layer = self.transpose_for_scores(mixed_key_layer)
         value_layer = self.transpose_for_scores(mixed_value_layer)
-        if config.selective_attention:
+        if self.config.selective_attention:
             query_mask1,key_mask1 = self.cross_image_selective_attention_mask(query_layer,0)
             query_mask2,key_mask2 = self.cross_image_selective_attention_mask(query_layer,1)
             query_mask3,key_mask3 = self.cross_image_selective_attention_mask(query_layer,2)
